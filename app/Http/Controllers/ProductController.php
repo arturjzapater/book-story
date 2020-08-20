@@ -19,7 +19,7 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
         return $product
-            ? response()->json(Product::find($id))
+            ? response()->json($product)
             : response()->json([ 'message' => 'Not Found' ], 404);
     }
 }

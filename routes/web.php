@@ -20,4 +20,9 @@ $router->group([ 'prefix' => 'api' ], function () use ($router) {
         $router->get('/', [ 'uses' => 'ProductController@readAll' ]);
         $router->get('/{id}', [ 'uses' => 'ProductController@readOne' ]);
     });
+
+    $router->group([ 'prefix' => 'carts' ], function () use ($router) {
+        $router->get('/{id}', [ 'uses' => 'CartController@readOne' ]);
+        $router->post('/', [ 'uses' => 'CartController@create' ]);
+    });
 });
