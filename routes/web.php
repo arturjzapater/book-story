@@ -24,5 +24,6 @@ $router->group([ 'prefix' => 'api' ], function () use ($router) {
     $router->group([ 'prefix' => 'carts' ], function () use ($router) {
         $router->get('/{id}', [ 'uses' => 'CartController@readOne' ]);
         $router->post('/', [ 'uses' => 'CartController@create' ]);
+        $router->put('/{id}', [ 'uses' => 'CartController@update' ]);
     });
 });
