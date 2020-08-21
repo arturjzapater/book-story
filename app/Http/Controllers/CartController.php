@@ -71,4 +71,11 @@ class CartController extends Controller
 
         return response()->json($res, $status);
     }
+
+    public function delete($id)
+    {
+        Cart::destroy($id);
+
+        return response()->json([ 'message' => 'Successfully deleted' ]);
+    }
 }

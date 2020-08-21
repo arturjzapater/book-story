@@ -60,6 +60,17 @@ class CartsApiTest extends TestCase
             ->assertResponseStatus(200);
     }
 
+    public function testUpdateNonexistent()
+    {
+        $this->put('/api/carts/10', [ 'product' => 1 ])
+            ->seeJson([ 'message' => 'Bad Request' ])
+            ->notSeeInDatabase('cart_product', [
+                'cart_id' => 1,
+                'product_id' => 1,
+            ])
+            ->assertResponseStatus(400);
+    }
+
     public function testUpdateDelete()
     {
         $this->prepareDB(6, 6);
@@ -69,6 +80,24 @@ class CartsApiTest extends TestCase
                 'cart_id' => 1,
                 'product_id' => 1,
             ])
+            ->assertResponseStatus(200);
+    }
+
+    public function testDelete()
+    {
+        $this->prepareDB(1, 1);
+
+        $this->delete('/api/carts/1')
+            ->seeJson([ 'message' => 'Successfully deleted' ])
+            ->notSeeInDatabase('carts', [ 'id' => 1 ])
+            ->assertResponseStatus(200);
+    }
+
+    public function testDeleteNonexistent()
+    {
+        $this->delete('/api/carts/2')
+            ->seeJson([ 'message' => 'Successfully deleted' ])
+            ->notSeeInDatabase('carts', [ 'id' => 1 ])
             ->assertResponseStatus(200);
     }
 }
