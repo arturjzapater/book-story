@@ -39,6 +39,7 @@ class CartController extends Controller
     {
         $cart = Cart::find($id);
         $cart->products;
+        $cart->count = $cart->products()->count();
 
         return $cart;
     }
@@ -57,6 +58,7 @@ class CartController extends Controller
         $cart = Cart::find($id);
         if ($cart) {
             $cart->products;
+            $cart->count = $cart->products()->count();
             return response()->json($cart);
         }
 
@@ -77,5 +79,12 @@ class CartController extends Controller
         Cart::destroy($id);
 
         return response()->json([ 'message' => 'Successfully deleted' ]);
+    }
+
+    public function getCount($id)
+    {
+        return response()->json([
+            'count' => CartProduct::where('cart_id', $id)->count(),
+        ]);
     }
 }

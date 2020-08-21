@@ -100,4 +100,13 @@ class CartsApiTest extends TestCase
             ->notSeeInDatabase('carts', [ 'id' => 1 ])
             ->assertResponseStatus(200);
     }
+
+    public function testGetCount()
+    {
+        $this->prepareDB(7, 3);
+
+        $this->get('/api/carts/1/itemcount')
+            ->seeJson([ 'count' => 3 ])
+            ->assertResponseStatus(200);
+    }
 }
