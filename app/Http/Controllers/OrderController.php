@@ -9,23 +9,28 @@ use App\OrderProduct;
 
 class OrderController extends Controller
 {
-    public function create(Request $request)
-    {
-        $order = Order::create($request->all());
-
-        $products = Cart::find($request->cart)
+    private function addProducts($cart_id, $order_id) {
+        $products = Cart::find($cart_id)
             ->products()
             ->select('product_id')
             ->get()
-            ->map(function($product) use ($order) {
+            ->map(function($product) use ($order_id) {
                 return [
-                    'order_id' => $order->id,
+                    'order_id' => $order_id,
                     'product_id' => $product->product_id,
                 ];
             })
             ->toArray();
 
         OrderProduct::insert($products);
+    }
+
+    public function create(Request $request)
+    {
+        $order = Order::create($request->all());
+        $this->addProducts($request->cart, $order->id);
+        Cart::destroy($request->cart);
+        
         $order->products;
 
         return response()

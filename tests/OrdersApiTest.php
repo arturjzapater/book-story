@@ -44,6 +44,7 @@ class OrdersApiTest extends TestCase
                 'order_id' => 1,
                 'product_id' => 4,
             ])
+            ->notSeeInDatabase('carts', [ 'id' => 1 ])
             ->assertResponseStatus(201);
     }
 }
