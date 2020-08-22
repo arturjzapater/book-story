@@ -97,7 +97,7 @@ class CartsApiTest extends TestCase
     {
         $this->delete('/api/carts/2')
             ->seeJson([ 'message' => 'Successfully deleted' ])
-            ->notSeeInDatabase('carts', [ 'id' => 1 ])
+            ->notSeeInDatabase('carts', [ 'id' => 2 ])
             ->assertResponseStatus(200);
     }
 

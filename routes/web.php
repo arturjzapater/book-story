@@ -28,4 +28,8 @@ $router->group([ 'prefix' => 'api' ], function () use ($router) {
         $router->put('/{id}', [ 'uses' => 'CartController@update' ]);
         $router->delete('/{id}', [ 'uses' => 'CartController@delete' ]);
     });
+
+    $router->group([ 'prefix' => 'orders'], function () use ($router) {
+        $router->post('/', [ 'uses' => 'OrderController@create' ]);
+    });
 });
