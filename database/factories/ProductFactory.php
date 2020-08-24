@@ -10,7 +10,7 @@ $factory->define(Product::class, function (Faker $faker) {
         'title' => str_replace('.', '', $faker->sentence),
         'author' => $faker->name,
         'description' => $faker->paragraph(6),
-        'cover' => "http://picsum.photos/id/{$faker->numberBetween(100, 300)}/200/300?grayscale",
+        'cover' => "http://picsum.photos/id/{$faker->numberBetween(0, 40)}/200/300?grayscale",
         'price' => $faker->numberBetween(80, 800),
         'pages' => $faker->numberBetween(50, 600),
         'width' => $faker->numberBetween(80, 250),
