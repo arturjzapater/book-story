@@ -27,9 +27,23 @@ class OrderController extends Controller
 
     public function create(Request $request)
     {
+        $this->validate($request, [
+            'name' => 'required|max:255',
+            'c_o' => 'nullable|max:255',
+            'address' => 'required|max:255',
+            'postal_code' => 'required|digits:5',
+            'email' => 'required|email',
+            'phone' => 'required|max:255',
+        ]);
+
+        $cart = Cart::find($request->cart);
+        if (!$cart) {
+            return response()->json([ 'message' => 'Cart does not exist' ], 400);
+        }
+
         $order = Order::create($request->all());
         $this->addProducts($request->cart, $order->id);
-        Cart::destroy($request->cart);
+        $cart->delete();
         
         $order->products;
 
