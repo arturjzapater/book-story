@@ -19,6 +19,7 @@ class CreateProductsTable extends Migration
             $table->string('title');
             $table->string('author');
             $table->text('description');
+            $table->string('cover');
             $table->integer('price');
             $table->integer('pages');
             $table->integer('width');
