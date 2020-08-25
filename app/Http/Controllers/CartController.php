@@ -5,24 +5,27 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Cart;
 use App\CartProduct;
+use App\Product;
 
 class CartController extends Controller
 {
     private function addItemToCart($cart_id, $product_id)
     {
-        try {
-            CartProduct::create([
-                'cart_id' => $cart_id,
-                'product_id' => $product_id,
-            ]);
-
-            return [ $this->getFullCart($cart_id), 200 ];
-        } catch(\Exception $e) {
-            return [
+        $cart = Cart::find($cart_id);
+        $product = Product::find($product_id);
+        if (!$cart || !$product) {
+            return[
                 [ 'message' => 'Bad Request' ],
                 400,
             ];
         }
+
+        CartProduct::create([
+            'cart_id' => $cart_id,
+            'product_id' => $product_id,
+        ]);
+
+        return [ $this->getFullCart($cart), 200 ];
     }
 
     private function deleteItemFromCart($cart_id, $product_id)
@@ -32,16 +35,26 @@ class CartController extends Controller
             [ 'product_id', $product_id ],
         ])->delete();
 
-        return [ $this->getFullCart($cart_id), 200 ];
+        $cart = Cart::find($cart_id);
+
+        return [ $this->getFullCart($cart), 200 ];
     }
 
-    private function getFullCart($id)
+    private function getFullCart($cart)
     {
-        $cart = Cart::find($id);
-        $cart->products;
+        $cart->products = $this->getProducts($cart);
         $cart->count = $cart->products()->count();
 
         return $cart;
+    }
+
+    private function getProducts($cart)
+    {
+        return $cart->products()
+            ->select('products.id', 'title', 'author', 'cover', 'price')
+            ->orderBy('title')
+            ->get()
+            ->makeHidden('pivot');
     }
 
     public function create()
@@ -56,13 +69,12 @@ class CartController extends Controller
     public function readOne($id)
     {
         $cart = Cart::find($id);
-        if ($cart) {
-            $cart->products;
-            $cart->count = $cart->products()->count();
-            return response()->json($cart);
+        if (!$cart) {
+            return response()->json([ 'message' => 'Not Found' ], 404);
         }
 
-        return response()->json([ 'message' => 'Not Found' ], 404);
+        $result = $this->getFullCart($cart);
+        return response()->json($result);   
     }
 
     public function update(Request $request, $id)
