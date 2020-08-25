@@ -35,3 +35,11 @@ Run the database migrations and, if you want, seed it
 php artisan migrate
 php artisan db:seed
 ```
+
+## Testing
+
+In your development environment, run:
+
+```bash
+phpunit
+```
