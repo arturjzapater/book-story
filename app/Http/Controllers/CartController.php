@@ -60,9 +60,10 @@ class CartController extends Controller
     public function create()
     {
         $cart = Cart::create();
+        $result = $this->getFullCart($cart);
 
         return response()
-            ->json($cart, 201)
+            ->json($result, 201)
             ->header('Location', "/api/carts/$cart->id");
     }
 
