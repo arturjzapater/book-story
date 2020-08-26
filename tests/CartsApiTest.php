@@ -56,8 +56,35 @@ class CartsApiTest extends TestCase
             ->seeInDatabase('cart_product', [
                 'cart_id' => 1,
                 'product_id' => 8,
+                'quantity' => 1,
             ])
             ->assertResponseStatus(200);
+    }
+
+    public function testUpdateExisting()
+    {
+        $this->prepareDB(6, 6);
+
+        $this->put('/api/carts/1', [ 'product' => 1, 'quantity' => 2 ])
+            ->seeInDatabase('cart_product', [
+                'cart_id' => 1,
+                'product_id' => 1,
+                'quantity' => 2,
+            ])
+            ->assertResponseStatus(200);
+    }
+
+    public function testUpdateExistingWrongInput()
+    {
+        $this->prepareDB(6, 6);
+
+        $this->put('/api/carts/1', [ 'product' => 1, 'quantity' => -4 ])
+            ->seeInDatabase('cart_product', [
+                'cart_id' => 1,
+                'product_id' => 1,
+                'quantity' => 1,
+            ])
+            ->assertResponseStatus(400);
     }
 
     public function testUpdateNonexistent()

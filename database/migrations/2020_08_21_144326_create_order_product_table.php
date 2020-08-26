@@ -22,6 +22,8 @@ class CreateOrderProductTable extends Migration
             $table->foreignId('product_id')
                 ->constrained('products')
                 ->onDelete('cascade');
+            $table->integer('quantity')
+                ->default('1');
         });
     }
 

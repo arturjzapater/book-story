@@ -9,25 +9,6 @@ use App\Product;
 
 class CartController extends Controller
 {
-    private function addItemToCart($cart_id, $product_id)
-    {
-        $cart = Cart::find($cart_id);
-        $product = Product::find($product_id);
-        if (!$cart || !$product) {
-            return[
-                [ 'message' => 'Bad Request' ],
-                400,
-            ];
-        }
-
-        CartProduct::create([
-            'cart_id' => $cart_id,
-            'product_id' => $product_id,
-        ]);
-
-        return [ $this->getFullCart($cart), 200 ];
-    }
-
     private function deleteItemFromCart($cart_id, $product_id)
     {
         CartProduct::where([
@@ -51,10 +32,51 @@ class CartController extends Controller
     private function getProducts($cart)
     {
         return $cart->products()
-            ->select('products.id', 'title', 'author', 'cover', 'price')
+            ->select('products.id', 'title', 'author', 'cover', 'price', 'quantity')
             ->orderBy('title')
             ->get()
             ->makeHidden('pivot');
+    }
+
+    private function updateItemInCart($cart_id, Request $request)
+    {
+        $cart = Cart::find($cart_id);
+        $product = Product::find($request->product);
+        if (!$this->validateUpdatedItem($cart, $product, $request->quantity)) {
+            return[
+                [ 'message' => 'Bad Request' ],
+                400,
+            ];
+        }
+
+        $this->updateOrAddItem($cart_id, $request->product, $request->quantity);
+
+        return [ $this->getFullCart($cart), 200 ];
+    }
+
+    private function updateOrAddItem($cart_id, $product_id, $product_qty)
+    {
+        $record = CartProduct::where([
+            [ 'cart_id', $cart_id ],
+            [ 'product_id', $product_id ],
+        ])->first();
+        
+        if (!empty($record)) {
+            $record->quantity = $product_qty || 1;
+            $record->save();
+        } else {
+            CartProduct::create([
+                'cart_id' => $cart_id,
+                'product_id' => $product_id,
+            ]);
+        }
+    }
+
+    private function validateUpdatedItem($cart, $product, $qty)
+    {
+        return (!isset($qty) || $qty > 0)
+            && $cart
+            && $product;
     }
 
     public function create()
@@ -82,7 +104,7 @@ class CartController extends Controller
     {
         [ $res, $status ] = $request->get('action') === 'delete'
             ? $this->deleteItemFromCart($id, $request->product)
-            : $this->addItemToCart($id, $request->product);
+            : $this->updateItemInCart($id, $request);
 
         return response()->json($res, $status);
     }

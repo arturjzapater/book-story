@@ -31,18 +31,22 @@ class OrdersApiTest extends TestCase
             ->seeInDatabase('order_product', [
                 'order_id' => 1,
                 'product_id' => 1,
+                'quantity' => 1,
             ])
             ->seeInDatabase('order_product', [
                 'order_id' => 1,
                 'product_id' => 2,
+                'quantity' => 1,
             ])
             ->seeInDatabase('order_product', [
                 'order_id' => 1,
                 'product_id' => 3,
+                'quantity' => 1,
             ])
             ->seeInDatabase('order_product', [
                 'order_id' => 1,
                 'product_id' => 4,
+                'quantity' => 1,
             ])
             ->notSeeInDatabase('carts', [ 'id' => 1 ])
             ->assertResponseStatus(201);
