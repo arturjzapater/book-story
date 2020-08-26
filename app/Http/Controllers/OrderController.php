@@ -12,12 +12,13 @@ class OrderController extends Controller
     private function addProducts($cart_id, $order_id) {
         $products = Cart::find($cart_id)
             ->products()
-            ->select('product_id')
+            ->select('product_id', 'quantity')
             ->get()
             ->map(function($product) use ($order_id) {
                 return [
                     'order_id' => $order_id,
                     'product_id' => $product->product_id,
+                    'quantity' => $product->quantity,
                 ];
             })
             ->toArray();
@@ -45,7 +46,11 @@ class OrderController extends Controller
         $this->addProducts($request->cart, $order->id);
         $cart->delete();
         
-        $order->products;
+        $order->products = $order->products()
+            ->select('products.id', 'title', 'author', 'cover', 'price', 'quantity')
+            ->orderBy('title')
+            ->get()
+            ->makeHidden('pivot');
 
         return response()
             ->json($order, 201)
