@@ -20,7 +20,28 @@ class ProductsApiTest extends TestCase
         $decoded = json_decode($this->response->getContent());
 
         $this->assertEquals(200, $this->response->status());
-        $this->assertEquals($product_num, count($decoded));
+        $this->assertEquals($product_num, count($decoded->data));
+    }
+
+    public function testGetAllPaginate()
+    {
+        $this->addProducts(200);
+
+        $this->call('GET', '/api/products');
+        $decoded = json_decode($this->response->getContent());
+        $this->assertCount(20, $decoded->data);
+    }
+
+    public function testGetAllPageTwo()
+    {
+        $this->addProducts(200);
+        $this->get('/api/products/?page=2')
+            ->seeJson([
+                'current_page' => 2,
+                'from' => 21,
+                'last_page' => 10,
+            ])
+            ->assertResponseStatus(200);
     }
 
     public function testGetOne()

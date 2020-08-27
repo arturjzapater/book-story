@@ -10,7 +10,7 @@ class ProductController extends Controller
     public function readAll()
     {
         $products = Product::orderBy('title', 'asc')
-            ->get();
+            ->paginate(20);
 
         return response()->json($products);
     }
