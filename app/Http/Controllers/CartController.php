@@ -61,14 +61,15 @@ class CartController extends Controller
             [ 'product_id', $product_id ],
         ])->first();
         
+        $qty = $product_qty ? $product_qty : 1;
         if (!empty($record)) {
-            $qty = $product_qty ? $product_qty : 1;
             $record->quantity = $qty;
             $record->save();
         } else {
             CartProduct::create([
                 'cart_id' => $cart_id,
                 'product_id' => $product_id,
+                'quantity' => $qty,
             ]);
         }
     }
