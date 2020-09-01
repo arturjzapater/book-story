@@ -25,9 +25,14 @@ cd libremo
 composer install
 ```
 
-Create a copy of the [.env.example](.env.example) file and rename it as .env. Edit it and change the following variables:
-- `API_KEY`: A random 32 character string
-- `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`: Your database settings
+Create a copy of the [.env.example](.env.example) file, rename it as .env and generate a new key
+
+```bash
+cp -a .env.example .env
+php artisan key:generate
+```
+
+In your .env, update the following variables with your databse settings: `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`.
 
 Run the database migrations and, if you want, seed it
 
